@@ -1,0 +1,78 @@
+Matched symbol: 000000000002dbd0 <_ZNSt8ios_baseC2Ev@plt>:
+Decoded: 000000000002dbd0 <_ZNSt8ios_baseC2Ev@plt>:
+--------------------------------------------------------------------------------
+Matched symbol: 000000000002e380 <_GLOBAL__sub_I__ZN20BlockSparsityPatternC2Ev>:
+Decoded: 000000000002e380 <_GLOBAL__sub_I__ZN20BlockSparsityPatternC2Ev>:
+--------------------------------------------------------------------------------
+Matched symbol: 000000000002e3b0 <_GLOBAL__sub_I__ZN25CompressedSparsityPatternC2Ev>:
+Decoded: 000000000002e3b0 <_GLOBAL__sub_I__ZN25CompressedSparsityPatternC2Ev>:
+--------------------------------------------------------------------------------
+Matched symbol: 000000000002e4a0 <_GLOBAL__sub_I__ZN13ExceptionBaseC2Ev>:
+Decoded: 000000000002e4a0 <_GLOBAL__sub_I__ZN13ExceptionBaseC2Ev>:
+--------------------------------------------------------------------------------
+Matched symbol: 000000000002e5d0 <_GLOBAL__sub_I__ZN8internal16GridReordering3d9CheapEdgeC2Ejj>:
+Decoded: 000000000002e5d0 <_GLOBAL__sub_I__ZN8internal16GridReordering3d9CheapEdgeC2Ejj>:
+--------------------------------------------------------------------------------
+Matched symbol: 000000000002e700 <_GLOBAL__sub_I__ZN9MatrixOut7OptionsC2Ebjb>:
+Decoded: 000000000002e700 <_GLOBAL__sub_I__ZN9MatrixOut7OptionsC2Ebjb>:
+--------------------------------------------------------------------------------
+Matched symbol: 000000000002e970 <_GLOBAL__sub_I__ZN11Polynomials19LagrangeEquidistantC2Ejj>:
+Decoded: 000000000002e970 <_GLOBAL__sub_I__ZN11Polynomials19LagrangeEquidistantC2Ejj>:
+--------------------------------------------------------------------------------
+Matched symbol: 0000000000059390 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EPKcRKS3_.isra.81>:
+Decoded: 0000000000059390 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EPKcRKS3_.isra.81>:
+--------------------------------------------------------------------------------
+Matched symbol: 00000000000e4620 <_ZNSt6vectorIjSaIjEEC2EmRKjRKS0_.constprop.325>:
+Decoded: 00000000000e4620 <_ZNSt6vectorIjSaIjEEC2EmRKjRKS0_.constprop.325>:
+--------------------------------------------------------------------------------
+Matched symbol: 00000000000e57e0 <_ZNSt6vectorIbSaIbEEC2EmRKbRKS0_.constprop.322>:
+Decoded: 00000000000e57e0 <_ZNSt6vectorIbSaIbEEC2EmRKbRKS0_.constprop.322>:
+--------------------------------------------------------------------------------
+Matched symbol: 00000000000f8f60 <_ZNSt6vectorIdSaIdEEC2EmRKdRKS0_.constprop.426>:
+Decoded: 00000000000f8f60 <_ZNSt6vectorIdSaIdEEC2EmRKdRKS0_.constprop.426>:
+--------------------------------------------------------------------------------
+Matched symbol: 000000000012a4c0 <_ZNSt6vectorIjSaIjEEC2EmRKjRKS0_.constprop.129>:
+Decoded: 000000000012a4c0 <_ZNSt6vectorIjSaIjEEC2EmRKjRKS0_.constprop.129>:
+--------------------------------------------------------------------------------
+Matched symbol: 000000000012a760 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EPKcRKS3_.isra.110>:
+Decoded: 000000000012a760 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EPKcRKS3_.isra.110>:
+--------------------------------------------------------------------------------
+Matched symbol: 00000000001bc700 <_ZNSt6vectorIjSaIjEEC2EmRKjRKS0_.constprop.193>:
+Decoded: 00000000001bc700 <_ZNSt6vectorIjSaIjEEC2EmRKjRKS0_.constprop.193>:
+--------------------------------------------------------------------------------
+Matched symbol: 00000000001ca660 <_ZNSt6vectorIjSaIjEEC2EmRKjRKS0_.constprop.129>:
+Decoded: 00000000001ca660 <_ZNSt6vectorIjSaIjEEC2EmRKjRKS0_.constprop.129>:
+--------------------------------------------------------------------------------
+Matched symbol: 00000000002111f0 <_ZN12SparseMatrixIdEC2Ev>:
+Decoded: 00000000002111f0 <_ZN12SparseMatrixIdEC2Ev>:
+--------------------------------------------------------------------------------
+Matched symbol: 0000000000211260 <_ZN12SparseMatrixIdEC2ERKS0_>:
+Decoded: 0000000000211260 <_ZN12SparseMatrixIdEC2ERKS0_>:
+--------------------------------------------------------------------------------
+Matched symbol: 00000000002112d0 <_ZN12SparseMatrixIdEC2ERK15SparsityPattern>:
+Decoded: 00000000002112d0 <_ZN12SparseMatrixIdEC2ERK15SparsityPattern>:
+--------------------------------------------------------------------------------
+Matched symbol: 0000000000216ad0 <_ZN12SparseMatrixIfEC2Ev>:
+Decoded: 0000000000216ad0 <_ZN12SparseMatrixIfEC2Ev>:
+--------------------------------------------------------------------------------
+Matched symbol: 0000000000216b40 <_ZN12SparseMatrixIfEC2ERKS0_>:
+Decoded: 0000000000216b40 <_ZN12SparseMatrixIfEC2ERKS0_>:
+--------------------------------------------------------------------------------
+Matched symbol: 0000000000216bb0 <_ZN12SparseMatrixIfEC2ERK15SparsityPattern>:
+Decoded: 0000000000216bb0 <_ZN12SparseMatrixIfEC2ERK15SparsityPattern>:
+--------------------------------------------------------------------------------
+Matched symbol: 0000000000232b50 <_ZN13LaplaceSolver12PrimalSolverILi3EEC2ER13TriangulationILi3EERK13FiniteElementILi3EERK10QuadratureILi3EERKS9_ILi2EERK8FunctionILi3EESJ_>:
+Decoded: 0000000000232b50 <_ZN13LaplaceSolver12PrimalSolverILi3EEC2ER13TriangulationILi3EERK13FiniteElementILi3EERK10QuadratureILi3EERKS9_ILi2EERK8FunctionILi3EESJ_>:
+--------------------------------------------------------------------------------
+Matched symbol: 000000000028ffc0 <_ZNSt6vectorIS_I6TensorILi1ELi3EESaIS1_EESaIS3_EEC2EmRKS3_RKS4_.constprop.304>:
+Decoded: 000000000028ffc0 <_ZNSt6vectorIS_I6TensorILi1ELi3EESaIS1_EESaIS3_EEC2EmRKS3_RKS4_.constprop.304>:
+--------------------------------------------------------------------------------
+Matched symbol: 00000000002901b0 <_ZNSt6vectorIdSaIdEEC2EmRKdRKS0_.constprop.316>:
+Decoded: 00000000002901b0 <_ZNSt6vectorIdSaIdEEC2EmRKdRKS0_.constprop.316>:
+--------------------------------------------------------------------------------
+Matched symbol: 00000000002902f0 <_ZNSt6vectorI6TensorILi1ELi3EESaIS1_EEC2EmRKS1_RKS2_.constprop.305>:
+Decoded: 00000000002902f0 <_ZNSt6vectorI6TensorILi1ELi3EESaIS1_EEC2EmRKS1_RKS2_.constprop.305>:
+--------------------------------------------------------------------------------
+Matched symbol: 00000000002903a0 <_ZNSt6vectorI6VectorIdESaIS1_EEC2EmRKS1_RKS2_.constprop.320>:
+Decoded: 00000000002903a0 <_ZNSt6vectorI6VectorIdESaIS1_EEC2EmRKS1_RKS2_.constprop.320>:
+--------------------------------------------------------------------------------
