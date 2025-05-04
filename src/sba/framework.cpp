@@ -48,8 +48,8 @@ static void ocaml_lift(const string& f_asm, const string& f_rtl) {
                               caml_alloc_initialized_string(strlen(s2), s2));
 
    // 指定绝对路径
-   std::string asm_output_path = "/home/llh/sba/f_asm.txt";
-   std::string rtl_output_path = "/home/llh/sba/f_rtl.txt";
+   std::string asm_output_path = std::filesystem::current_path().string() +"/f_asm.txt";
+   std::string rtl_output_path = std::filesystem::current_path().string() +"/f_rtl.txt";
 
    // // 确保目录存在
    // std::filesystem::create_directories("/home/user/output/");
@@ -140,20 +140,12 @@ fptrs, const unordered_map<IMM,unordered_set<IMM>>& indirect_targets) {
    // 反汇编data段，并且写入adm和raw文件里面
    SYSTEM::disassemble(f_obj, f_asm, f_raw);
    ocaml_lift(f_asm, f_rtl);
-   // 得到所有的虚函数表地址
-   std::tuple<bool,IMM,unordered_map<IMM, unordered_set<IMM>>> v_tables_pair = ELF_x86::vtables_by_rel(f_obj);
-   unordered_map<IMM, unordered_set<IMM>> v_tables = std::get<2>(v_tables_pair);
-   bool striped = std::get<0>(v_tables_pair);
-   IMM file_offset = std::get<1>(v_tables_pair);
+   
 
    // 得到构造函数和虚表
    auto noreturn_calls = SYSTEM::noreturn_calls(f_obj);
    auto offset_rtl_raw = load(f_asm, f_rtl, f_raw, noreturn_calls);
    auto p = new Program(f_obj, offset_rtl_raw, fptrs, indirect_targets);
-   p->striped = striped;
-   unordered_map<IMM,IMM> constructors = p->find_vtable_constructors();
-   std::pair<std::unordered_set<IMM>,std::unordered_map<IMM, IMM>> vfunc = p->scan_vfunc(constructors,v_tables,f_obj,file_offset);
-   p->vfunc = vfunc.second;
    
    if (!p->faulty)
       return p;

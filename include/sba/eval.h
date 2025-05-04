@@ -136,14 +136,16 @@ namespace SBA {
    /* ---------------------------- EXECUTE & EVAL --------------------------- */
    #define EXECUTE_CALL(state)                                                 \
            if (state.config.enable_callee_effect) {                            \
-              for (auto r: SYSTEM::return_value)                         \
+               for (auto r: SYSTEM::return_value){                             \
                  state.update(get_id(r), AbsVal(BaseLH(BaseLH::T::TOP),        \
                                          BaseStride(BaseStride::T::DYNAMIC),   \
                                          Taint(Taint::T::TOP)));               \
+                  }                                                            \
                  vector<UnitId> args;                                          \
-                 for (auto reg: SYSTEM::call_args)                       \
+                 for (auto reg: SYSTEM::call_args){                             \
                     args.push_back(get_id(reg));                               \
-                 auto sp = state.value(get_id(SYSTEM::STACK_PTR));       \
+                    }                                                          \
+                 auto sp = state.value(get_id(SYSTEM::STACK_PTR));             \
                  auto const& sp_baselh = ABSVAL(BaseLH, sp);                   \
                  if (!sp_baselh.top() && !sp_baselh.bot() && !sp_baselh.notlocal() \
                   && sp_baselh.base() == stackSym) {                           \
@@ -170,7 +172,7 @@ namespace SBA {
                                            Taint(Taint::T::TOP)));             \
                  }                                                             \
            }                                                                   \
-           for (auto r: SYSTEM::return_value) {                          \
+           for (auto r: SYSTEM::return_value) {                                \
               CLOBBER_REG(r, state.loc.block);                                 \
            }                                                                   \
            /* handle indirect calls */                                         \
@@ -178,7 +180,27 @@ namespace SBA {
               auto aval_t = target()->addr()->eval(state);                     \
               state.loc.func->target_expr[state.loc.insn->offset()]            \
                               = ABSVAL(BaseStride,aval_t).clone();             \
-           }
+           }                                                                   \
+           for (auto r: SYSTEM::return_value){                                 \
+             auto this_p = state.get_func()->this_points;                      \
+             IF_EXIT(this_p,source,state,                                      \
+                (it->expr_id(state).reg_expr()||it->expr_id(state).mem_expr()) \
+                && it->expr_id(state).reg == r,Expr*,                          \
+                {                                                              \
+                this_p.erase(std::remove(this_p.begin(), this_p.end(), res), this_p.end()); \
+                state.get_func()->this_points = this_p;                        \
+             },{}                                                              \
+             );}                                                               \
+            for (auto reg: SYSTEM::call_args){                                 \
+               auto this_p = state.get_func()->this_points;                    \
+               IF_EXIT(this_p,source,state,                                    \
+                  (it->expr_id(state).reg_expr()||it->expr_id(state).mem_expr()) \
+                  && it->expr_id(state).reg == reg,Expr*,                      \
+                  {                                                            \
+                    this_p.erase(std::remove(this_p.begin(), this_p.end(), res), this_p.end()); \
+                    state.get_func()->this_points = this_p;                    \
+                  },{}                                                         \
+               );}                                                             \
    // #define EXECUTE_ASSIGN(state)                                               \
    //         auto destination = dst()->simplify();                               \
    //         auto source = src()->simplify();                                    \

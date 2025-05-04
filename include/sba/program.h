@@ -11,6 +11,17 @@
 #include "system.h"
 #include "common.h"
 #include <utility>  // 引入 pair
+#include <elf.h>
+#include <gelf.h>
+#include <elf.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string>
+#include <stdexcept>
+#include <utility>
+#include <vector>
+#include <cstring>
+#include <iostream>
 
 namespace SBA {
    /* Forward declaration */
@@ -30,6 +41,7 @@ namespace SBA {
       #endif
       bool striped;
       // 虚函数地址
+      unordered_set<IMM> vtables;
       unordered_map<IMM,IMM> vfunc;
 
 
@@ -104,9 +116,10 @@ namespace SBA {
 
       // vtable
       unordered_map<IMM,IMM> find_vtable_constructors() const ;
-      std::pair<std::unordered_set<IMM>,std::unordered_map<IMM, IMM>> scan_vfunc(unordered_map<IMM,IMM> constructors, 
+      std::pair<std::unordered_set<IMM>,std::unordered_map<IMM, IMM>> scan_vfunc(unordered_set<IMM> constructors, 
          unordered_map<IMM, unordered_set<IMM>> v_tables,const string& file, IMM file_offset);
-
+      void resolve_vfunc(const string& f_obj);
+      std::pair<uint64_t, uint64_t> get_text_section_range(const std::string& filename) ;
 
     private:
       /* cfg */

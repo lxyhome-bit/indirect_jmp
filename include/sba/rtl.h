@@ -197,7 +197,6 @@ namespace SBA {
       RTL* find_container(RTL* rtl, const function<bool(const RTL*)>& select)
                                                               const override;
 
-      int lea = 0;
    };
 
    /* -------------------------------- Call --------------------------------- */

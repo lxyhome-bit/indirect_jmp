@@ -274,6 +274,18 @@ bool Program::updated(IMM fptr) {
    #endif
 }
 
+void Program::resolve_vfunc(const string& f_obj){
+   // 得到所有的虚函数表地址
+   std::tuple<bool,IMM,unordered_map<IMM, unordered_set<IMM>>> v_tables_pair = ELF_x86::vtables_by_rel(f_obj);
+   unordered_map<IMM, unordered_set<IMM>> v_tables = std::get<2>(v_tables_pair);
+   bool striped = std::get<0>(v_tables_pair);
+   IMM file_offset = std::get<1>(v_tables_pair);
+   striped = striped;
+   // unordered_map<IMM,IMM> constructors = find_vtable_constructors();
+   std::pair<std::unordered_set<IMM>,std::unordered_map<IMM, IMM>> vfunc = scan_vfunc(vtables,v_tables,f_obj,file_offset);
+   this->vfunc = vfunc.second;
+}
+
 
 void Program::update() {
    /* update existing blocks with recent_icfs_ */
@@ -580,7 +592,7 @@ vtable_dst里面存储的事所有的虚表表头，所以就可以从表头开�
 
 // 返回2个东西，一个是所有的虚表表头，一个是所有的虚表地址与实际地址的映射
 std::pair<std::unordered_set<IMM>,std::unordered_map<IMM, IMM>> Program::scan_vfunc(
-   std::unordered_map<IMM, IMM> constructors,
+   std::unordered_set<IMM> constructors,
    std::unordered_map<IMM, std::unordered_set<IMM>> v_tables,
    const string& file,
    IMM file_offset
@@ -589,7 +601,7 @@ std::pair<std::unordered_set<IMM>,std::unordered_map<IMM, IMM>> Program::scan_vf
    // 提取所有的虚表表头地址
    std::unordered_set<IMM> vtable_dst;
    for (const auto& pair : constructors) {
-       IMM vtable_addr = pair.second;  // 构造函数对应的虚表地址
+       IMM vtable_addr = pair;  // 构造函数对应的虚表地址
        vtable_dst.insert(vtable_addr);
    }
    
@@ -642,6 +654,61 @@ std::pair<std::unordered_set<IMM>,std::unordered_map<IMM, IMM>> Program::scan_vf
 }
 
 
+std::pair<uint64_t, uint64_t> SBA::Program::get_text_section_range(const std::string& filename) {
+   int fd = open(filename.c_str(), O_RDONLY);
+   if (fd < 0) {
+       throw std::runtime_error("无法打开 ELF 文件: " + filename);
+   }
+
+   Elf64_Ehdr ehdr;
+   if (::read(fd, &ehdr, sizeof(ehdr)) != sizeof(ehdr)) {
+       close(fd);
+       throw std::runtime_error("无法读取 ELF 文件头");
+   }
+
+   if (memcmp(ehdr.e_ident, ELFMAG, SELFMAG) != 0) {
+       close(fd);
+       throw std::runtime_error("不是 ELF 文件");
+   }
+
+   if (ehdr.e_ident[EI_CLASS] != ELFCLASS64) {
+       close(fd);
+       throw std::runtime_error("仅支持 64 位 ELF 文件");
+   }
+
+   std::vector<Elf64_Shdr> shdrs(ehdr.e_shnum);
+   if (lseek(fd, ehdr.e_shoff, SEEK_SET) == -1 ||
+       ::read(fd, shdrs.data(), ehdr.e_shnum * sizeof(Elf64_Shdr)) !=
+           ehdr.e_shnum * sizeof(Elf64_Shdr)) {
+       close(fd);
+       throw std::runtime_error("无法读取节头表");
+   }
+
+   if (ehdr.e_shstrndx >= ehdr.e_shnum) {
+       close(fd);
+       throw std::runtime_error("无效的字符串表索引");
+   }
+   Elf64_Shdr strtab_shdr = shdrs[ehdr.e_shstrndx];
+   std::vector<char> strtab(strtab_shdr.sh_size);
+   if (lseek(fd, strtab_shdr.sh_offset, SEEK_SET) == -1 ||
+       ::read(fd, strtab.data(), strtab_shdr.sh_size) != strtab_shdr.sh_size) {
+       close(fd);
+       throw std::runtime_error("无法读取字符串表");
+   }
+
+   for (size_t i = 0; i < ehdr.e_shnum; ++i) {
+       const char* section_name = strtab.data() + shdrs[i].sh_name;
+       if (std::strcmp(section_name, ".text") == 0) {
+           uint64_t start = shdrs[i].sh_addr;
+           uint64_t size = shdrs[i].sh_size;
+           close(fd);
+           return {start, start + size};
+       }
+   }
+
+   close(fd);
+   throw std::runtime_error("未找到 .text 节");
+}
 
 
 unordered_set<IMM> Program::scan_cptrs() const {

@@ -59,6 +59,10 @@ using namespace SBA;
              (object.mem_expr() && object.m_offset == m_offset));
    }
 
+   /* 内存的流向，一个内存表达式依赖于另一个内存表达式的条件是它们的基址相同*/
+   bool AbsId::easy_depended(const AbsId& object) const {
+      return mem_expr() && reg == object.reg && (object.reg_expr() ||  object.mem_expr());
+   }
 
    bool AbsId::operator==(const AbsId& object) const {
       if (sym_type == object.sym_type) {

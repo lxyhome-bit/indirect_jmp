@@ -49,8 +49,10 @@ void Insn::execute(State& s) const {
       LOG3("------------------------ insn " << offset_ << " ------------------------");
       LOG3(to_string());
       s.loc.insn = (Insn*)this;
-      if(raw_bytes()[0] == 72 && raw_bytes()[1] == 141 && (s.get_func())->this_pointer)  s.lea = 1;
-      else s.lea = 0;
+      // 限制为lea指令，且为rip相对寻址,
+      // rip相对寻址的特征为raw_bytes()[2]为00rrr101，rrr 根据目标寄存器变化
+      if((raw_bytes()[0] == 72 && raw_bytes()[1] == 141  && (raw_bytes()[2] & 0xc7) == 0x05)        
+       &&(s.get_func())->this_pointer && s.lea!=3 )  s.lea = 1;
       stmt_->execute(s);
       s.commit_insn();
    }

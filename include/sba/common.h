@@ -110,20 +110,21 @@ extern bool GLOBAL_DEBUG;
 #endif
 
 
-#define IF_EXIT(vec,obj,s,CODE_T,CODE_F) {                                                      \
-   auto it = std::find(vec.begin(), vec.end(),obj);                             \
-    if (it != vec.end()) {                                                      \
-      CODE_T                                                                    \
-    }                                                                           \
-   CODE_F                                                                       \
-
-   for (auto it = vec.begin(); it != vec.end();) {
-      if ( it.expr_id(s).  threshold) {
-          it = vec.erase(it); // erase 返回下一个有效迭代器
-      } else {
-          ++it; // 仅在不删除时递增
-      }
-  }
+#define IF_EXIT(vec,obj,s,cond,INIT,CODE_T,CODE_F) {                                \
+   bool flag = false;                                                          \
+   INIT res ;                                                                       \
+   for (auto it : vec) {                                                       \
+      if (cond) {                \
+         flag = true;                                                          \
+         res = it;                                                             \
+      }                                                                        \
+  }                                                                            \
+  if (flag)                                                                    \
+  {                                                                            \
+      CODE_T                                                                   \
+  } else {                                                                     \
+      CODE_F                                                                   \
+  }                                                                            \
 }
 
 #define IF_RTL_TYPE(T, obj, cast_obj, CODE_T, CODE_F) {                        \

@@ -389,7 +389,7 @@ void Assign::Execute_ASSIGN(State& state){
    auto source = src()->simplify();                                    
    auto size_d = destination->mode_size();                             
    auto size_s = source->mode_size();                                  
-                                                                        
+
    /* dst is register */                                               
    IF_RTL_TYPE(Reg, destination, reg, {                                
       auto aval_s = source->eval(state);                               
@@ -459,33 +459,84 @@ void Assign::Execute_ASSIGN(State& state){
    }, {});                                                             
    });                                                                 
    });                                                                 
-   /*分析this指针*/                                                   
-   IF_RTL_TYPE(Reg, source, reg_s,{                                   
-      auto aval_s = destination->eval(state);                         
-      aval_s.mode(size_d);                                            
-      if(reg_s->reg() == SYSTEM::Reg::DI && !state.get_func()->this_pointer ){                              
-            state.set_f_flag();                                       
-            state.get_func()->this_points.push_back(destination);
-            state.get_func()->this_pointer = true;                
-      }                                                               
-   },{});
-    /*跟踪this指针的流向*/
+ 
    auto this_p = state.get_func()->this_points;
-   IF_EXIT(this_p,source,{
-      this_p.push_back(destination); 
-   },{}
-   );
-   
-   IF_EXIT(this_p,destination,{},{
-      this_p.erase(std::remove(this_p.begin(), this_p.end(), destination), this_p.end());
-   }
-   );
 
-   /*跟踪lea指针的流向*/
-   //   if (reg->reg() == SYSTEM::INSN_PTR && state.lea == 1){           
-   //    state.get_func()->lea_dst.second =  &aval_s ;                
-   // }                                                                
-            /*分析lea指令*/        
+   if(state.get_func()->this_pointer){                    
+      
+      /*跟踪this指针的流向*/
+      
+      IF_EXIT(this_p,destination,state,
+         it->expr_id(state).operator==(destination->expr_id(state)),Expr*,
+         {
+         this_p.erase(std::remove(this_p.begin(), this_p.end(), res), this_p.end());
+         state.get_func()->this_points = this_p;
+      },{
+         IF_EXIT(this_p, ,state,
+         it->expr_id(state).operator==(source->expr_id(state)),Expr*,
+         {
+         this_p.push_back(destination); 
+         state.get_func()->this_points = this_p;
+      },{}
+      );}
+      );
+   }
+   /*分析this指针和lea指令*/                                                   
+   IF_RTL_TYPE(Reg, source, reg_s,{                                     
+      if(reg_s->reg() == SYSTEM::Reg::DI && !state.get_func()->this_pointer && state.lea != 3){                              
+         state.get_func()->this_points.push_back(destination);
+         state.get_func()->this_pointer = true;                
+      }                                                                                   
+   },{});
+   /*跟踪lea指针的流向,可以处理add 0x10 %rax这样的传递，也是合法的*/
+   using LeaDstType = std::pair<IMM, Expr*>;
+   auto lea_dst = state.get_func()->lea_dst;
+
+   if(state.lea == 2){
+      IF_EXIT(lea_dst,destination,state,
+         it.second->expr_id(state).operator==(destination->expr_id(state))&&
+         !(it.second->expr_id(state).equal_sym(source->expr_id(state))&&it.second->expr_id(state).reg_expr()&&
+         it.second->expr_id(state).offset % 8 == 0),LeaDstType,
+         {
+         lea_dst.erase(std::remove(lea_dst.begin(), lea_dst.end(), res), lea_dst.end());
+         state.get_func()->lea_dst = lea_dst;
+      },{IF_EXIT(lea_dst,source,state,
+         it.second->expr_id(state).operator==(source->expr_id(state)) || 
+         (it.second->expr_id(state).equal_sym(source->expr_id(state))&&it.second->expr_id(state).reg_expr()&&
+         it.second->expr_id(state).offset % 8 == 0),LeaDstType,
+         {
+         LeaDstType aval_s = std::make_pair(res.first,destination);
+         lea_dst.erase(std::remove(lea_dst.begin(), lea_dst.end(), res), lea_dst.end());
+         lea_dst.push_back(aval_s);
+         state.get_func()->lea_dst = lea_dst;
+      },{}
+      );}
+      );
+   }
+   /*初始化lea指令*/   
+   if (state.lea == 1 && source->expr_id(state).const_expr()){
+      pair<IMM,Expr*> aval_s = std::make_pair(source->expr_id(state).offset,destination);       
+      state.get_func()->lea_dst.push_back(aval_s);
+      state.lea = 2;
+   }
+
+   /*分析lea指令
+   判断lea的指令的流向是否为this指针的地址
+   */
+   
+   bool flag = false;
+   LeaDstType res;
+   if(state.lea == 2){
+      for (auto it : lea_dst){
+         for (auto it2 : this_p){
+            if (it.second->expr_id(state).easy_depended(it2->expr_id(state))){
+               state.lea = 3;
+               state.get_func()->this_pointer = false; 
+               state.get_func()->vfunc_table = it.first;
+            }
+         }
+      }
+   }
 }
 void Assign::execute(State& s) {
    Execute_ASSIGN(s);

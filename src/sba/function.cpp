@@ -158,13 +158,17 @@ void Function::build_cfg() {
 }
 
 
-void Function::analyze(const State::StateConfig& conf) {
+void Function::analyze(const State::StateConfig& conf,Program* p) {
    LOG3("############# analyzing ##############");
    CUSTOM_ANALYSIS_CLEAR();
    s_ = State(this, conf);
    s_.loc.func = this;
    for (auto scc: s_list_)
       scc->execute(s_);
+   if(s_.lea == 3){
+      p->vtables.insert(vfunc_table);
+   }
+   s_.lea = 0;
 }
 
 

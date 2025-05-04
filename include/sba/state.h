@@ -40,7 +40,7 @@ namespace SBA {
       };
       Loc loc;
       StateConfig config;
-      bool lea = false;
+      int lea = 0;
 
     private:
       Function* f_;

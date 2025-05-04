@@ -19,6 +19,7 @@
 #include "../../include/sba/insn.h"
 #include "../../include/sba/rtl.h"
 #include "../../include/sba/expr.h"
+#include <bits/fs_ops.h>
 
 using namespace std;
 using namespace SBA;
@@ -63,7 +64,9 @@ void setup(int argc, char **argv) {
    if (!std::filesystem::exists(f_auto) || !std::filesystem::exists(f_obj))
       help();
    
-   d_base = "/home/llh/sba/";
+   // d_base = "/home/llh/sba/";
+   // 当前的工作目录，自动检测
+   d_base = "/home/ubuntu/indirect_jmp/";
    f_out = d_base + "result.json";
 
 // 如果参数不规范，则调用help
@@ -188,7 +191,7 @@ int main(int argc, char **argv) {
                auto f = p->func(fptr);
                if (f != nullptr) {
                   if (should_analyze(p, f)) {
-                     f->analyze(config);
+                     f->analyze(config,p);
                      f->resolve_icf();
                   }
                   delete f;
@@ -206,11 +209,22 @@ int main(int argc, char **argv) {
    }
    LOG_STOP();
 
-   // 处理虚函数
+   // 获取f_obj文件中的.text段的范围   
+   pair<uint64_t, uint64_t> text_range = p->get_text_section_range(f_obj);
    for (auto fptr: p->fptrs()) {
+      if(fptr < text_range.first || fptr >= text_range.second)
+         continue;
       auto f = p->func(fptr);
-      f->analyze(config);
+      
+      std::stringstream stream;
+      // 将十进制变量转换为十六进制并存储到字符串流中
+      stream << std::hex << fptr;
+      // 获取十六进制字符串
+      std::string hexString = stream.str();
+      
+      f->analyze(config,p);
    }
+   p->resolve_vfunc( f_obj);
 
    /* results */
    fstream f1(f_out, fstream::out);

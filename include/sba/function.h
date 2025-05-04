@@ -36,7 +36,9 @@ namespace SBA {
       bool this_pointer;
       
       vector<Expr*> this_points ;
-      pair<u_int64_t,AbsVal*> lea_dst = {0,nullptr};
+      vector<pair<IMM,Expr*>> lea_dst;
+
+      IMM vfunc_table = 0;
       
     private:
       Block* entry_;
@@ -58,7 +60,7 @@ namespace SBA {
       const vector<SCC*>& scc_list() const {return s_list_;};
 
       /* analysis */
-      void analyze(const State::StateConfig& conf);
+      void analyze(const State::StateConfig& conf,Program* p);
       vector<AbsVal> track(TRACK trackType, const UnitId& id, const Loc& loc,
                            const vector<Insn*>& insns);
       void resolve_icf();

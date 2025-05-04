@@ -30,6 +30,7 @@ namespace SBA {
          bool reg_expr() const {return sym_type == T::REG;};
          bool equal_sym(const AbsId& object) const;
          bool depended(const AbsId& object) const;
+         bool easy_depended(const AbsId& object) const ;
          bool operator==(const AbsId& object) const;
          string to_string() const;
       };
